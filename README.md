@@ -1,3 +1,5 @@
+
+
 # VitalGenie
 
 VitalGenie is an AI-powered medical assistant platform designed to enhance medical communication, learning, and safety monitoring. It integrates advanced AI models with modern web technologies to offer functionalities such as speech transcription with speaker diarization, retrieval-augmented chat, image analysis, prescription extraction, and real-time monitoring via an ESP32-CAM feed.
@@ -12,18 +14,16 @@ VitalGenie is an AI-powered medical assistant platform designed to enhance medic
 - [File Structure](#file-structure)
 - [Setup Instructions](#setup-instructions)
 - [Usage](#usage)
+- [EHR Report Generation and PDF Download](#ehr-report-generation-and-pdf-download)
 - [Security Considerations](#security-considerations)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
-- [License](#license)
-
 
 ---
 
 ## Overview
 
 ![diagram-export-3-23-2025-9_26_43-AM](https://github.com/user-attachments/assets/9f03d605-3931-4a93-96ef-252ecbfe8bfe)
-
 
 VitalGenie leverages state-of-the-art AI models and modern web frameworks to provide a seamless user experience for medical professionals and patients. The system handles multiple data types—from audio and text to images—and processes them via various endpoints to deliver real-time insights. The backend is built using FastAPI to ensure high performance and quick development cycles, while the frontend uses Tailwind CSS and Alpine.js to create a responsive, dynamic user interface.
 
@@ -53,6 +53,11 @@ VitalGenie leverages state-of-the-art AI models and modern web frameworks to pro
   - Uses Google Gemini to analyze the live video feed for anomalies.
   - Generates alerts and logs monitoring events in Firebase Firestore if an emergency is detected.
 
+- **Electronic Health Record (EHR) Report Generation:**  
+  - Automatically generates a comprehensive EHR report from the latest transcription summary.
+  - Formats the report into a professional, visually appealing PDF using ReportLab.
+  - Allows users to download the EHR PDF via the frontend.
+
 - **User-Friendly Web Interface:**  
   - Single-page application with dedicated pages for Home, Chat, Recording, and Monitoring.
   - Built using HTML, Tailwind CSS, Alpine.js, and custom JavaScript to ensure a modern, interactive experience.
@@ -77,6 +82,9 @@ VitalGenie leverages state-of-the-art AI models and modern web frameworks to pro
     
   - **Monitoring:**  
     A background task continuously fetches an image from the ESP32-CAM and processes it with Google Gemini to check for emergencies. Alerts are generated and logged in Firestore when anomalies are detected.
+    
+  - **EHR Report Generation:**  
+    A dedicated endpoint retrieves the latest transcription summary, constructs a detailed prompt for generating an EHR report, and then creates a well-formatted PDF using ReportLab. This PDF is made available for download.
 
 ### Frontend (Web Client)
 - **Technology:**  
@@ -84,14 +92,14 @@ VitalGenie leverages state-of-the-art AI models and modern web frameworks to pro
   - **HTML:** Provides the structure.
   - **Tailwind CSS:** Offers utility-first CSS styling and ensures responsiveness.
   - **Alpine.js:** Handles UI reactivity and state management.
-  - **JavaScript:** Manages API interactions, chat functions, audio recording, file uploads, and live monitoring updates.
+  - **JavaScript:** Manages API interactions, chat functions, audio recording, file uploads, live monitoring updates, and now the EHR PDF download.
   
 - **User Interaction:**  
   The UI is divided into multiple sections (Home, Chat, Recording, Monitoring) that allow users to interact with the system, send audio/text/image data, and receive real-time feedback from the backend.
 
 ### External Integrations
 - **Google Gemini:**  
-  Used for generative AI tasks such as transcript diarization, chat response generation, image analysis, and prescription extraction.
+  Used for generative AI tasks such as transcript diarization, chat response generation, image analysis, prescription extraction, and EHR report creation.
   
 - **Whisper Model:**  
   Performs the heavy lifting of transcribing audio into text.
@@ -100,7 +108,7 @@ VitalGenie leverages state-of-the-art AI models and modern web frameworks to pro
   Provides fast and scalable vector indexing for context retrieval during chat interactions.
   
 - **Firebase Firestore:**  
-  Acts as the persistence layer, storing transcription summaries, prescription details, and monitoring events.
+  Acts as the persistence layer, storing transcription summaries, prescription details, monitoring events, and potentially logs for EHR generation.
   
 - **ESP32-CAM:**  
   Supplies a live video feed that is analyzed for real-time monitoring.
@@ -124,7 +132,8 @@ vitalgenie/
 │   │   ├── rag_chat.py             # Endpoint for retrieval-augmented chat
 │   │   ├── image_analysis.py       # Endpoint for processing medical images
 │   │   ├── prescription.py         # Endpoint for extracting prescription details
-│   │   └── monitoring.py           # Endpoint and background task for real-time monitoring
+│   │   ├── monitoring.py           # Endpoint and background task for real-time monitoring
+│   │   └── ehr_pdf.py              # Endpoint for generating and downloading the EHR report as a PDF
 │   └── utils/                      # Utility modules for helper functions
 │       ├── __init__.py             # Marks the directory as a Python package
 │       ├── gemini_utils.py         # Provides functions to interact with Google Gemini
@@ -133,11 +142,12 @@ vitalgenie/
 ├── css/                            # Frontend CSS directory
 │   └── style.css                   # Custom CSS (including Tailwind overrides and chat styling)
 ├── js/                             # Frontend JavaScript directory
-│   └── script.js                   # Contains logic for chat, file uploads, audio recording, and monitoring
+│   └── script.js                   # Contains logic for chat, file uploads, audio recording, live monitoring, and EHR PDF download
 ├── index.html                      # Main HTML file that defines the single-page application layout and navigation
 ├── README.md                       # Detailed project documentation (this file)
 └── requirements.txt                # List of Python dependencies for the backend
 ```
+
 ![diagram-export-3-23-2025-9_21_19-AM](https://github.com/user-attachments/assets/ff86f3c1-e72a-4ab2-ab4f-184a5e5f95da)
 
 ---
@@ -210,6 +220,25 @@ Open `index.html` in your preferred browser. Verify that the `backendURL` in `js
 
 ---
 
+## EHR Report Generation and PDF Download
+
+VitalGenie now provides an endpoint to generate a comprehensive Electronic Health Record (EHR) report in PDF format from the latest transcription summary. This report is automatically generated by using a prompt to Google Gemini and then formatted using ReportLab to produce a professional PDF.
+
+**Backend Functionality:**
+- **Endpoint:** `/generate_ehr_pdf`
+- **Process:**
+  1. Retrieves the latest transcription summary from Firebase Firestore.
+  2. Constructs a prompt instructing Google Gemini to create a detailed EHR report.
+  3. Uses ReportLab’s Platypus to format the generated report into a visually appealing PDF.
+  4. The PDF is temporarily stored and returned as a downloadable file.
+
+**Frontend Integration:**
+- A "Download EHR Report" button has been added to the Chat page.
+- When clicked, the frontend makes a GET request to the `/generate_ehr_pdf` endpoint.
+- The PDF is downloaded automatically to the user’s device as `ehr_report.pdf`.
+
+---
+
 ## Security Considerations
 
 - **Secrets & Credentials:**  
@@ -250,12 +279,4 @@ Contributions are welcome! If you’d like to contribute:
 
 Please adhere to the coding standards and ensure all tests pass before submitting your pull request.
 
----
 
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-This README provides a comprehensive overview of VitalGenie, detailing the architecture, file structure, setup, and usage instructions. It also includes important security considerations and guidelines for contributing to the project. If you have any questions or need further assistance, please refer to the documentation or reach out via the project's issue tracker.
