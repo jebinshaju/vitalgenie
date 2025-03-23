@@ -65,7 +65,7 @@ VitalGenie leverages state-of-the-art AI models and modern web frameworks to pro
 ---
 
 ## Architecture & Rationale
-
+https://github.com/jebinshaju/vitalgenie/blob/main/app/Readme.md
 ### Backend (FastAPI API)
 - **Technology:**  
   FastAPI is used for its high performance, asynchronous capabilities, and automatic documentation. It is well-suited for developing APIs that handle real-time processing tasks.
