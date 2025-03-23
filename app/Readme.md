@@ -190,6 +190,9 @@ Provides a live video feed that is continuously monitored for anomalies.
   3. Uses ReportLab’s Platypus module to format and style the report into a professional PDF.
   4. Saves the PDF to a temporary file and returns it as a downloadable file.
 
+
+![image](https://github.com/user-attachments/assets/132a68f4-ddd9-4cc5-b048-f691d3f5eae8)
+
 ### Utility Modules
 
 #### Google Gemini Utilities (`app/utils/gemini_utils.py`)
