@@ -1,0 +1,41 @@
+body {
+  font-family: 'Rubik', sans-serif;
+}
+/* Chat window styling */
+.chat-window {
+  max-height: 400px;
+  overflow-y: auto;
+  background-color: #1F2937; /* dark gray */
+  border: 1px solid #374151;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+.chat-bubble {
+  max-width: 70%;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.chat-user {
+  background-color: #4ADE80; /* emerald */
+  align-self: flex-end;
+  color: #1F2937;
+}
+.chat-ai {
+  background-color: #374151; /* darker gray */
+  align-self: flex-start;
+  color: #F9FAFB;
+}
+/* Loading spinner */
+.spinner {
+  border: 4px solid #374151;
+  border-top: 4px solid #60A5FA;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
