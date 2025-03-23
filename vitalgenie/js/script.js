@@ -222,3 +222,26 @@ async function pollMonitoringStatus() {
 }
 setInterval(pollMonitoringStatus, 10000);
 pollMonitoringStatus();
+
+async function downloadEHRReport() {
+  try {
+    const response = await fetch(`${backendURL}/generate_ehr_pdf`);
+    if (!response.ok) {
+      throw new Error("Network response was not ok.");
+    }
+    const blob = await response.blob();
+    // Create a temporary link element to trigger the download
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "ehr_report.pdf";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Error downloading EHR report:", error);
+    alert("Failed to download EHR report: " + error);
+  }
+}
+
