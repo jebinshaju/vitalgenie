@@ -17,7 +17,7 @@ db = firestore.client()
 # ------------------------------
 # Google Gemini Configuration
 # ------------------------------
-GOOGLE_API_KEY = "AIzaSyAkeDhrZ0uBebCu-mCBOjQrMbJpGAWD824"  # Replace with your API key
+GOOGLE_API_KEY = ""  # Replace with your API key
 genai.configure(api_key=GOOGLE_API_KEY)
 # Initialize the Gemini model (adjust the model name as needed)
 model = genai.GenerativeModel('gemini-2.0-flash-exp')
