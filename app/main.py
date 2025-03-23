@@ -2,7 +2,7 @@ import asyncio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from app.routers import transcribe, rag_chat, image_analysis, prescription, monitoring
+from app.routers import transcribe, rag_chat, image_analysis, prescription, monitoring, ehr_pdf
 
 app = FastAPI(
     title="VitalGenie",
@@ -30,6 +30,8 @@ app.include_router(rag_chat.router)
 app.include_router(image_analysis.router)
 app.include_router(prescription.router)
 app.include_router(monitoring.router)
+app.include_router(ehr_pdf.router)
+
 
 @app.get("/")
 async def root():
