@@ -2,7 +2,7 @@
 
 # VitalGenie
 
-VitalGenie is an AI-powered medical assistant platform designed to enhance medical communication, learning, and safety monitoring. It integrates advanced AI models with modern web technologies to offer functionalities such as speech transcription with speaker diarization, retrieval-augmented chat, image analysis, prescription extraction, and real-time monitoring via an ESP32-CAM feed.
+VitalGenie is an AI-powered medical assistant platform designed to enhance medical communication, learning, and safety monitoring. It integrates advanced AI models with modern web technologies to offer functionalities such as speech transcription with speaker diarization, retrieval-augmented chat, image analysis, prescription extraction, and real-time monitoring via an ESP32-CAM feed. Made at tinkhack25 Hackathon :) at model engineering college. 
 
 ---
 
