@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" class="dark" x-data="{ page: 'home' }">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VitalGenie</title>
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;text y='0.9em' font-size='90'&gt;💻&lt;/text&gt;&lt;/svg&gt;">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Alpine.js -->
+  <script src="//unpkg.com/alpinejs" defer></script>
+  <!-- External CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dark:bg-gray-900 dark:text-gray-100">
+  <!-- Navigation -->
+  <nav class="bg-gray-800 shadow">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="text-xl font-bold text-indigo-400">VitalGenie</div>
+        <div class="hidden sm:flex space-x-8">
+          <a @click.prevent="page = 'home'" href="#" class="text-gray-300 hover:text-white">Home</a>
+          <a @click.prevent="page = 'chat'" href="#" class="text-gray-300 hover:text-white">Chat</a>
+          <a @click.prevent="page = 'recording'" href="#" class="text-gray-300 hover:text-white">Recording</a>
+          <a @click.prevent="page = 'monitoring'" href="#" class="text-gray-300 hover:text-white">Monitoring</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Home Page -->
+  <div class="max-w-7xl mx-auto p-6" x-show="page === 'home'">
+    <h1 class="text-4xl font-bold text-center text-indigo-400">Welcome to VitalGenie</h1>
+    <p class="mt-4 text-center text-lg text-gray-300">
+      VitalGenie is an AI-powered platform designed to assist in medical communication and learning. Our system provides a suite of tools including:
+    </p>
+    <ul class="mt-4 max-w-xl mx-auto text-gray-300 list-disc list-inside">
+      <li>Speech transcription and speaker diarization</li>
+      <li>Natural language question answering (RAG Chat)</li>
+      <li>Image analysis for medical images</li>
+      <li>Prescription extraction from conversation or image</li>
+      <li>Audio recording and transcription</li>
+      <li>Real-time monitoring of patient rooms via ESP32-CAM</li>
+    </ul>
+    <p class="mt-4 text-center text-lg text-gray-300">
+      Whether you are a doctor, patient, or language learner, VitalGenie helps you understand and improve medical communication.
+    </p>
+    <div class="mt-6 flex justify-center">
+      <button @click="page = 'chat'" class="bg-indigo-600 text-white px-6 py-3 rounded hover:bg-indigo-500">
+        Get Started with Chat
+      </button>
+    </div>
+  </div>
+
+  <!-- Chat Page -->
+  <div class="max-w-7xl mx-auto p-6" x-show="page === 'chat'">
+    <h2 class="text-3xl font-semibold mb-4">Chat with VitalGenie</h2>
+    <div class="chat-window flex flex-col space-y-2" id="chatWindow"></div>
+    <div class="mt-4 flex space-x-2">
+      <input type="text" id="chatInput" placeholder="Type your message..." class="flex-grow p-2 border rounded-l dark:bg-gray-800 dark:border-gray-700">
+      <button onclick="sendMessage()" class="bg-indigo-600 text-white px-4 py-2 rounded-r hover:bg-indigo-500">
+        Send
+      </button>
+    </div>
+    <!-- Extra options: Upload Image and Upload Prescription -->
+    <div class="mt-4 flex space-x-4">
+      <button onclick="document.getElementById('hiddenImage').click()" class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600">
+        Upload Image
+      </button>
+      <button onclick="document.getElementById('hiddenPrescription').click()" class="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600">
+        Upload Prescription
+      </button>
+    </div>
+    <!-- Hidden file inputs -->
+    <input type="file" id="hiddenImage" accept="image/*" style="display:none" onchange="handleImageUpload(this.files[0])">
+    <input type="file" id="hiddenPrescription" accept="image/*" style="display:none" onchange="handlePrescriptionUpload(this.files[0])">
+  </div>
+
+  <!-- Recording Page -->
+  <div class="max-w-7xl mx-auto p-6" x-show="page === 'recording'">
+    <h2 class="text-3xl font-semibold mb-4">Recording</h2>
+    <p class="mb-4">Record audio directly in your browser or upload an existing recording to receive a transcription and diarized output.</p>
+    <div class="flex space-x-4 mb-4">
+      <button id="startRec" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500">
+        Start Recording
+      </button>
+      <button id="stopRec" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-500" disabled>
+        Stop Recording
+      </button>
+    </div>
+    <div>
+      <audio id="recordedAudio" controls class="mb-4" style="display: none;"></audio>
+    </div>
+    <input type="file" id="recordUpload" class="border p-2 rounded mb-4 dark:bg-gray-800" accept="audio/*">
+    <button onclick="uploadRecording()" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-500">
+      Upload Recording
+    </button>
+    <div id="recordingSpinner" class="flex items-center space-x-2 mt-4" style="display:none;">
+      <div class="spinner"></div>
+      <span>Processing...</span>
+    </div>
+    <div id="recordingOutput" class="mt-4 bg-gray-800 p-4 rounded shadow-sm"></div>
+  </div>
+  <!-- New: Download EHR Report Button -->
+<div class="mt-4 flex justify-center">
+  <button onclick="downloadEHRReport()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500">
+    Download EHR Report
+  </button>
+</div>
+</div>
+
+  <!-- Monitoring Page -->
+  <div class="max-w-7xl mx-auto p-6" x-show="page === 'monitoring'">
+    <h2 class="text-3xl font-semibold mb-4">Live Monitoring</h2>
+    <p class="mb-4">Below is the live video feed from the ESP32-CAM. The system continuously checks for anomalies and updates the status accordingly.</p>
+    <div class="mb-4">
+      <!-- The video feed is displayed as an image with cache-busting -->
+      <img id="monitoringVideo" class="w-full rounded" src="" alt="Live Camera Feed">
+    </div>
+    <div id="monitoringStatus" class="text-lg font-semibold"></div>
+  </div>
+
+  <!-- External JavaScript -->
+  <script src="js/script.js"></script>
+</body>
+</html>
